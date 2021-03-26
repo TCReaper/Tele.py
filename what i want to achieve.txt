@@ -1,0 +1,13 @@
+
+telegram bot to help with AG accountability
+
+keep track of: 
+- sleep schedule (sleep and wake timing)
+- calculate amount of sleep from the two times
+- PT done (boolean)
+
+accept input to change:
+- sleep schedule
+- PT done
+
+

@@ -40,7 +40,38 @@ def editMessage(bot,query,text='',markup=None):
         return True
 
 
-def deleteMessage(bot,query):
+def deleteQuery(bot,query):
     message = query.message.message_id
     chat = query.message.chat.id
     bot.delete_message(chat,message)
+
+def deleteMessage(bot,message):
+    msg = message.message_id
+    chat = message.chat.id
+    bot.delete_message(chat,msg)
+
+def createPTBoard(date):
+    
+    cross = u'\U0001F17E'
+    tick = u'\U00002705'
+
+    board = [date,[cross,'  ad'],[cross,'  hs' ],[cross,'  ja' ],[cross,'  jo' ]]
+
+    return board
+
+def printPTBoard(board,bot,id):
+
+    date = board[0]
+    board = board[1:]
+    sentence = str(date)+'\n'
+    for i in board:
+        sentence += i[0] + i[1] + '\n'
+    message = bot.send_message(id, sentence,reply_markup=createIKM(['edit']))
+
+    return message
+    
+    
+    
+    
+
+    
