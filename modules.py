@@ -1,4 +1,4 @@
-from telebot import types
+from telebot import *
 
 
 #   import file for modules

@@ -1,6 +1,5 @@
 import time
 import telebot
-from telebot import types
 from token_var import token
 from modules import *
 
