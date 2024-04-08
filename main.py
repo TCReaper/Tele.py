@@ -1,63 +1,41 @@
-import time
-import telebot
-import datetime
-from telebot import types
-from token_var import token
-from modules import *
+import logging
+from tkn import token
+from telegram import Update
+from datetime import datetime
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
-TOKEN = token()
-bot = telebot.TeleBot(TOKEN)	#create a new Telegram Bot object
+async def poll(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    questions = ["Yes","No"]
+    message = await context.bot.send_poll(
+        update.effective_chat.id,
+        "AG Time for "+datetime.now().strftime("%a, %d %b"),
+        questions,
+        is_anonymous=False,
+        allows_multiple_answers=False,
+    )
+    # Save some info about the poll the bot_data for later use in receive_poll_answer
+    payload = {
+        message.poll.id: {
+            "questions": questions,
+            "message_id": message.message_id,
+            "chat_id": update.effective_chat.id,
+            "answers": 0,
+        }
+    }
+    context.bot_data.update(payload)
 
+if __name__ == '__main__':
+    application = ApplicationBuilder().token(token()).build()
 
-
-#           /help
-
-@bot.message_handler(commands=['help'])
-def send_help(message):
-    bot.reply_to(message, "just figure it out")
-
-
-#           /newday
-
-@bot.message_handler(commands=['newday'])
-def start_day(message):
-    dt = datetime.datetime.now().date()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("poll", poll))
     
-    day = str("{:0>2d}".format(dt.day))
-    month = str("{:0>2d}".format(dt.month))
-    year = str(dt.year)[2:]
-
-    today = day+month+year
-
-    sentence = "good morning!! today is "+today+".\ndon't forget your PT today :)"
-    bot.send_message(message.chat.id, sentence)
-    
-    time.sleep(2)
-    sentence = "creating a board for PT..."
-    message = bot.send_message(message.chat.id, sentence)
-    board = createPTBoard(today)
-    deleteMessage(bot,message)
-    printPTBoard(board,bot,message.chat.id)
-    
-
-@bot.callback_query_handler(func=lambda call: True)
-def iq_callback(query):
-    data = query.data
-    reply = query.message.chat.id
-    if data.startswith('cancel'):
-        editMessage(bot,query,text='function cancelled.')
-        time.sleep(3)
-        deleteMessage(bot,query)
-    elif data.startswith('edit'):
-        message = bot.send_message(reply, "select one to edit!!",
-                                   reply_markup=createIKM(['ad','hs','ja','jo']))
-        
-
-
-
-
-
-
-bot.polling()
+    application.run_polling()

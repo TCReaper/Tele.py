@@ -1,13 +1,7 @@
 
-telegram bot to help with AG accountability
+telegram bot to help with AG meetups
 
-keep track of: 
-- sleep schedule (sleep and wake timing)
-- calculate amount of sleep from the two times
-- PT done (boolean)
-
-accept input to change:
-- sleep schedule
-- PT done
-
+features:
+- poll every 2 weeks
+- editable
 
